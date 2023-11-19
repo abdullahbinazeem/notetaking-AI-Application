@@ -1,6 +1,5 @@
 import TypewriterTitle from "@/components/TypewriterTitle";
 import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 import { ArrowRight } from "lucide-react";
@@ -22,7 +21,7 @@ export default function Home() {
 
         <div className="flex justify-center">
           <Link href="/dashboard">
-            <Button className="bg-green-600">
+            <Button className="bg-green-600" size="sm">
               Get Started
               <ArrowRight className="ml-2 w-5 h-5" strokeWidth={3} />
             </Button>
