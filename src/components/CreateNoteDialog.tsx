@@ -11,29 +11,44 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogDescription,
+  DialogClose,
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 
 import { Loader2, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import { SingleImageDropzone } from "./Edgestore/signgleImageDropzone";
+import { useEdgeStore } from "@/lib/edgestore";
 
 type Props = {};
 
 const CreateNoteDialog = (props: Props) => {
-  const router = useRouter();
+  const [file, setFile] = useState<File>();
   const [input, setInput] = useState("");
+  const [url, setUrl] = useState("");
+
+  const { edgestore } = useEdgeStore();
+
+  const router = useRouter();
 
   const createNotebook = useMutation({
     mutationFn: async () => {
-      const response = await axios.post("/api/createNoteBook", { name: input });
+      if (file == null) return;
+      const res = await edgestore.publicFiles.upload({
+        file,
+      });
+      const response = await axios.post("/api/createNoteBook", {
+        name: input,
+        imageUrl: res.url,
+      });
       return response.data;
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (input === "") {
+    if (input === "" || file == null) {
       toast.error("You must fill in all input fields.");
       return;
     }
@@ -75,10 +90,21 @@ const CreateNoteDialog = (props: Props) => {
             placeholder="Name..."
           />
           <div className="h-4"></div>
+          <h3 className="my-4 text-s text-gray-500">Note Image</h3>
+          <SingleImageDropzone
+            width={300}
+            height={200}
+            value={file}
+            onChange={(file) => {
+              setFile(file);
+            }}
+            className="m-auto"
+          />
+          <div className="h-4"></div>
           <div className="flex item-center gap-2">
-            <Button type="reset" variant={"secondary"}>
+            <DialogClose className="text-sm bg-slate-100 py-2 px-4 rounded-md">
               Cancel
-            </Button>
+            </DialogClose>
             <Button
               className="bg-green-600"
               disabled={createNotebook.isPending}

@@ -12,14 +12,14 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { name } = body;
+  const { name, imageUrl } = body;
 
   const note_ids = await db
     .insert($notes)
     .values({
       name,
       userId,
-      imageUrl: "",
+      imageUrl,
     })
     .returning({
       insertedId: $notes.id,
