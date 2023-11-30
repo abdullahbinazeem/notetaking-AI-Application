@@ -90,7 +90,7 @@ const TipTapEditor = ({ note }: Props) => {
     });
     console.log(debouncedEditorState);
     editor?.chain().unsetBold().unsetItalic().run();
-  }, [debouncedEditorState]);
+  }, [debouncedEditorState, editor, saveNote]);
 
   return (
     <>
@@ -107,7 +107,7 @@ const TipTapEditor = ({ note }: Props) => {
       <span className="text-sm">
         Tip: Press
         <kbd className="mx-2 px-2 py-1.5 text-md font-semibold text-gray-800 bg-gray-100 border-gray-200 rounded-lg">
-          'Shift + :'
+          &apos;Shift + :&apos;
         </kbd>
         for AI autocomplete
       </span>

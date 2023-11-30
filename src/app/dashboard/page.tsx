@@ -80,7 +80,10 @@ const DashboardPage = async (props: Props) => {
             <CreateNoteDialog />
             {notes.map((note) => {
               return (
-                <div className="relative  hover:shadow-xl transition hover:-translate-y-1">
+                <div
+                  className="relative  hover:shadow-xl transition hover:-translate-y-1"
+                  key={note.id}
+                >
                   <div className="absolute top-4 right-4 opacity-50 hover:opacity-100">
                     <DeleteButton noteId={note.id} />
                   </div>
