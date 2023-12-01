@@ -7,7 +7,7 @@ import { $notes } from "@/lib/db/schema";
 import { auth } from "@clerk/nextjs";
 import { eq, and } from "drizzle-orm";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React from "react";
 
 type Props = {

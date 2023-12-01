@@ -1,19 +1,39 @@
 import Link from "next/link";
 import React from "react";
-import { UserButton, auth } from "@clerk/nextjs";
+import Image from "next/image";
 
 import { ArrowLeft } from "lucide-react";
+import { UserButton, auth } from "@clerk/nextjs";
+
+import { eq } from "drizzle-orm";
+import { $notes } from "@/lib/db/schema";
+import { db } from "@/lib/db";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CreateNoteDialog from "@/components/CreateNoteDialog";
-import { $notes } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { db } from "@/lib/db";
 import DeleteButton from "@/components/DeleteButton";
-import Image from "next/image";
+import Navbar from "./_components/Navbar";
 
 type Props = {};
+
+const nav = [
+  {
+    id: "notes",
+    name: "Notes",
+    component: <div />,
+  },
+  {
+    id: "todos",
+    name: "To Dos",
+    component: <div />,
+  },
+  {
+    id: "grades",
+    name: "Grades",
+    component: <div />,
+  },
+];
 
 const DashboardPage = async (props: Props) => {
   const { userId } = auth();
@@ -27,17 +47,12 @@ const DashboardPage = async (props: Props) => {
       <div className="grainy min-h-screen">
         <div className="max-w-7xl mx-auto p-10">
           <div className="w-full">
-            <ul className="flex justify-center gap-x-12 text-xl">
-              <li className="border-b-2 border-green-600 px-2 cursor-pointer">
-                Notes{" "}
-              </li>
-              <li className="px-2 border-b-0 hover:border-b-2 hover:border-green-100 transition cursor-pointer">
-                To Dos
-              </li>
-              <li className="px-2 border-b-0 hover:border-b-2 hover:border-green-100 transition cursor-pointer">
-                Grades
-              </li>
-            </ul>
+            <Navbar
+              nav={nav.map((item) => ({
+                id: item.id,
+                name: item.name,
+              }))}
+            />
           </div>
           <div>
             <div className="h-14"></div>
@@ -117,7 +132,5 @@ const DashboardPage = async (props: Props) => {
     </>
   );
 };
-
-export const revalidate = 0;
 
 export default DashboardPage;

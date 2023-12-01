@@ -20,6 +20,7 @@ import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { SingleImageDropzone } from "./Edgestore/signgleImageDropzone";
 import { useEdgeStore } from "@/lib/edgestore";
+import { revalidatePath } from "next/cache";
 
 type Props = {};
 
@@ -58,6 +59,7 @@ const CreateNoteDialog = (props: Props) => {
         toast.success(`New note created: ${input}`);
         console.log("create new note:", { note_id });
         router.push(`/notebook/${note_id}`);
+        router.refresh();
       },
       onError: (error) => {
         console.error(error);

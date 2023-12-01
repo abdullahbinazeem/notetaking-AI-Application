@@ -88,9 +88,8 @@ const TipTapEditor = ({ note }: Props) => {
         toast.success("Update failed");
       },
     });
-    console.log(debouncedEditorState);
     editor?.chain().unsetBold().unsetItalic().run();
-  }, [debouncedEditorState, editor, saveNote]);
+  }, [debouncedEditorState, editor]);
 
   return (
     <>
