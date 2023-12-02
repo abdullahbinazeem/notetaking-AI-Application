@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
@@ -19,15 +20,14 @@ import { Loader2, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { SingleImageDropzone } from "./Edgestore/signgleImageDropzone";
+
 import { useEdgeStore } from "@/lib/edgestore";
-import { revalidatePath } from "next/cache";
 
 type Props = {};
 
 const CreateNoteDialog = (props: Props) => {
   const [file, setFile] = useState<File>();
   const [input, setInput] = useState("");
-  const [url, setUrl] = useState("");
 
   const { edgestore } = useEdgeStore();
 
@@ -35,13 +35,20 @@ const CreateNoteDialog = (props: Props) => {
 
   const createNotebook = useMutation({
     mutationFn: async () => {
-      if (file == null) return;
-      const res = await edgestore.publicFiles.upload({
-        file,
-      });
+      if (file) {
+        const res = await edgestore.publicFiles.upload({
+          file,
+        });
+
+        const response = await axios.post("/api/createNoteBook", {
+          name: input,
+          imageUrl: res.url,
+        });
+        return response.data;
+      }
+      ``;
       const response = await axios.post("/api/createNoteBook", {
         name: input,
-        imageUrl: res.url,
       });
       return response.data;
     },
