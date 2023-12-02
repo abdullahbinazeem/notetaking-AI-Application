@@ -1,18 +1,14 @@
-import { OpenAIApi, Configuration } from "openai-edge";
+import OpenAI from "openai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 
 // /api/completion
 
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(config);
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
 
-  const response = await openai.createChatCompletion({
+  const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [
       {
@@ -28,7 +24,7 @@ export async function POST(req: Request) {
         I am writing a piece of text in a notion text editor app.
         Complete this sentence: ${prompt}
         keep the tone of the text consistent with the rest of the text.
-        keep the response under 30 words. 
+        keep the response short.
         `,
       },
     ],

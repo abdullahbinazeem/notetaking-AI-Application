@@ -8,5 +8,10 @@ export default authMiddleware({
 });
 
 export const config = {
-  matcher: ["/((?!api|trpc))(_next.*|.+.[w]+$)", "/api/edgestore/init"],
+  matcher: [
+    "/((?!.+\\.[\\w]+$|_next).*)",
+    "/",
+    "/(api|trpc)(.*)",
+    "/api/edgestore/init",
+  ],
 };
