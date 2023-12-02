@@ -75,6 +75,7 @@ const DashboardPage = async (props: Props) => {
                       avatarBox: "w-16 h-16",
                     },
                   }}
+                  afterSignOutUrl="/"
                 />
               </div>
             </div>
