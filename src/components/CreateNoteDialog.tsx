@@ -46,7 +46,6 @@ const CreateNoteDialog = (props: Props) => {
         });
         return response.data;
       }
-      ``;
       const response = await axios.post("/api/createNoteBook", {
         name: input,
       });
