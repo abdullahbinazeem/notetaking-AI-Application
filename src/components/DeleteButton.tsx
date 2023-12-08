@@ -26,7 +26,7 @@ const DeleteButton = ({ noteId, size }: Props) => {
   const router = useRouter();
   const deleteNote = useMutation({
     mutationFn: async () => {
-      const response = await axios.post("/api/deleteNote", {
+      const response = await axios.post("/api/notebook/deleteNote", {
         noteId,
       });
       return response.data;
@@ -50,7 +50,7 @@ const DeleteButton = ({ noteId, size }: Props) => {
             and remove all AI contexts.
           </DialogDescription>
           <div className="h-4" />
-          <DialogClose>
+          <DialogClose asChild>
             <Button
               variant={"destructive"}
               className="w-[50%] m-auto"

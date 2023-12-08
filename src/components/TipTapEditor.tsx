@@ -21,7 +21,7 @@ const TipTapEditor = ({ note }: Props) => {
     note.editorState || `<h1>${note.name}</h1>`
   );
   const { complete, completion } = useCompletion({
-    api: "/api/completion",
+    api: "/api/notebook/completion",
     onError: () => {
       toast.error(
         "Error with AI autocorrect. Take a break, you might have reached AI limit."
@@ -30,7 +30,7 @@ const TipTapEditor = ({ note }: Props) => {
   });
   const saveNote = useMutation({
     mutationFn: async () => {
-      const response = await axios.post("/api/saveNote", {
+      const response = await axios.post("/api/notebook/saveNote", {
         noteId: note.id,
         editorState: editorState,
       });

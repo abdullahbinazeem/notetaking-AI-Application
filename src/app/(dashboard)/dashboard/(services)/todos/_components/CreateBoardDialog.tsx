@@ -5,6 +5,8 @@ import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
+import { Loader2, Plus } from "lucide-react";
+
 import {
   Dialog,
   DialogContent,
@@ -13,19 +15,18 @@ import {
   DialogTrigger,
   DialogDescription,
   DialogClose,
-} from "./ui/dialog";
-import { Input } from "./ui/input";
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
-import { Loader2, Plus } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { SingleImageDropzone } from "./Edgestore/signgleImageDropzone";
+import { SingleImageDropzone } from "@/components/Edgestore/signgleImageDropzone";
 
 import { useEdgeStore } from "@/lib/edgestore";
 
 type Props = {};
 
-const CreateNoteDialog = (props: Props) => {
+const CreateBoardDialog = (props: Props) => {
   const [file, setFile] = useState<File>();
   const [input, setInput] = useState("");
 
@@ -33,20 +34,20 @@ const CreateNoteDialog = (props: Props) => {
 
   const router = useRouter();
 
-  const createNotebook = useMutation({
+  const createBoardbook = useMutation({
     mutationFn: async () => {
       if (file) {
         const res = await edgestore.publicFiles.upload({
           file,
         });
 
-        const response = await axios.post("/api/notebook/createNoteBook", {
+        const response = await axios.post("/api/notebook/createBoardBook", {
           name: input,
           imageUrl: res.url,
         });
         return response.data;
       }
-      const response = await axios.post("/api/notebook/createNoteBook", {
+      const response = await axios.post("/api/notebook/createBoardBook", {
         name: input,
       });
       return response.data;
@@ -60,7 +61,7 @@ const CreateNoteDialog = (props: Props) => {
       return;
     }
 
-    createNotebook.mutate(undefined, {
+    createBoardbook.mutate(undefined, {
       onSuccess: ({ note_id }) => {
         toast.success(`New note created: ${input}`);
         console.log("create new note:", { note_id });
@@ -79,16 +80,14 @@ const CreateNoteDialog = (props: Props) => {
       <DialogTrigger>
         <div className="flex justify-center items-center gap-2 border-dashed border-2 border-green-600 h-full rounded-lg sm:flex-col hover:shadow-xl  transition hover:-translate-y-1 flex-row p-4">
           <Plus className="w-6 h-6 text-green-600" strokeWidth={3} />
-          <h2 className="font-semibold text-green-600 sm:mt-2">
-            New Note Book
-          </h2>
+          <h2 className="font-semibold text-green-600 sm:mt-2">New Board</h2>
         </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Study notes</DialogTitle>
+          <DialogTitle>New Todo Board</DialogTitle>
           <DialogDescription>
-            You can create a new note by clicking the button below
+            You can create a new board by clicking the button below
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -98,7 +97,7 @@ const CreateNoteDialog = (props: Props) => {
             placeholder="Name..."
           />
           <div className="h-4"></div>
-          <h3 className="my-4 text-s text-gray-500">Note Image</h3>
+          <h3 className="my-4 text-s text-gray-500">Board Image</h3>
           <SingleImageDropzone
             width={300}
             height={200}
@@ -115,9 +114,9 @@ const CreateNoteDialog = (props: Props) => {
             </DialogClose>
             <Button
               className="bg-green-600"
-              disabled={createNotebook.isPending}
+              disabled={createBoardbook.isPending}
             >
-              {createNotebook.isPending && (
+              {createBoardbook.isPending && (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               )}
               Create
@@ -129,4 +128,4 @@ const CreateNoteDialog = (props: Props) => {
   );
 };
 
-export default CreateNoteDialog;
+export default CreateBoardDialog;

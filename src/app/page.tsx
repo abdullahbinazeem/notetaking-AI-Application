@@ -20,7 +20,7 @@ export default function Home() {
         <div className="mt-8"></div>
 
         <div className="flex justify-center">
-          <Link href="/dashboard">
+          <Link href="/dashboard/notes">
             <Button className="bg-green-600" size="sm">
               Get Started
               <ArrowRight className="ml-2 w-5 h-5" strokeWidth={3} />
