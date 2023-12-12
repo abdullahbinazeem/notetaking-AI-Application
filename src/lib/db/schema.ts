@@ -46,6 +46,7 @@ export const $card = pgTable("card", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   task: text("task").notNull(),
+  order: integer("order").notNull(),
 
   listId: integer("listId"),
 
@@ -60,3 +61,5 @@ export const cardRelations = relations($card, ({ one }) => ({
 }));
 
 export type NoteType = typeof $notes.$inferInsert;
+export type ListType = typeof $list.$inferInsert;
+export type CardType = typeof $card.$inferInsert;

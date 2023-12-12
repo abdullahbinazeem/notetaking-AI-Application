@@ -58,7 +58,6 @@ const DeleteButton = ({ noteId, size }: Props) => {
                 deleteNote.mutate(undefined, {
                   onSuccess: () => {
                     router.refresh();
-                    router.push("/dashboard");
                   },
                   onError: (err) => {
                     console.error(err);

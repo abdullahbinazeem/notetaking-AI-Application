@@ -24,11 +24,11 @@ import { SingleImageDropzone } from "@/components/Edgestore/signgleImageDropzone
 
 import { useEdgeStore } from "@/lib/edgestore";
 
-type Props = {};
-
-const CreateBoardDialog = (props: Props) => {
+const CreateBoardDialog = () => {
   const [file, setFile] = useState<File>();
   const [input, setInput] = useState("");
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const { edgestore } = useEdgeStore();
 
@@ -41,14 +41,14 @@ const CreateBoardDialog = (props: Props) => {
           file,
         });
 
-        const response = await axios.post("/api/notebook/createBoardBook", {
-          name: input,
+        const response = await axios.post("/api/todos/createBoard", {
+          title: input,
           imageUrl: res.url,
         });
         return response.data;
       }
-      const response = await axios.post("/api/notebook/createBoardBook", {
-        name: input,
+      const response = await axios.post("/api/todos/createBoard", {
+        title: input,
       });
       return response.data;
     },
@@ -63,9 +63,10 @@ const CreateBoardDialog = (props: Props) => {
 
     createBoardbook.mutate(undefined, {
       onSuccess: ({ note_id }) => {
-        toast.success(`New note created: ${input}`);
+        toast.success(`New board created: ${input}`);
         console.log("create new note:", { note_id });
-        router.push(`/notebook/${note_id}`);
+        setIsOpen(false);
+        router.push(`/dashboard/todos`);
         router.refresh();
       },
       onError: (error) => {
@@ -76,9 +77,9 @@ const CreateBoardDialog = (props: Props) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
-        <div className="flex justify-center items-center gap-2 border-dashed border-2 border-green-600 h-full rounded-lg sm:flex-col hover:shadow-xl  transition hover:-translate-y-1 flex-row p-4">
+        <div className=" flex justify-center items-center gap-2 border-dashed border-2 border-green-600 h-full rounded-lg sm:flex-col hover:shadow-xl  transition hover:-translate-y-1 flex-row p-4">
           <Plus className="w-6 h-6 text-green-600" strokeWidth={3} />
           <h2 className="font-semibold text-green-600 sm:mt-2">New Board</h2>
         </div>
