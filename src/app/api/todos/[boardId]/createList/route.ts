@@ -64,8 +64,8 @@ export async function POST(req: Request, { params }: BoardIdParams) {
       list_id: list_ids[0].insertedId,
     });
   } catch (error) {
-    return {
+    return NextResponse.json({
       error,
-    };
+    });
   }
 }

@@ -1,12 +1,17 @@
 "use client";
 
 import React from "react";
-
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 
 import { ListForm } from "./list-form";
 import { ListItem } from "./list-item";
+import { useMutation } from "@tanstack/react-query";
+
+import toast from "react-hot-toast";
+import axios from "axios";
 
 type ListWithCards = {
   id: number;
@@ -29,7 +34,37 @@ interface ListContainerProps {
   boardId: string;
 }
 
-const ListContainer = ({ data, boardId }: ListContainerProps) => {
+function reorder<T>(list: T[], startIndex: number, endIndex: number) {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+}
+
+const ListContainer = ({ data }: ListContainerProps) => {
+  const router = useRouter();
+  const params = useParams();
+
+  const reorderList = useMutation({
+    mutationFn: async (list: ListWithCards) => {
+      const response = await axios.post(
+        `/api/todos/${params.boardId}/reorder`,
+        {
+          list,
+        }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success(`List reorder!`);
+      router.refresh();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const [orderedData, setOrderedData] = useState(data);
 
   useEffect(() => {
@@ -49,6 +84,17 @@ const ListContainer = ({ data, boardId }: ListContainerProps) => {
       destination.index === source.index
     ) {
       return;
+    }
+
+    if (type == "list") {
+      console.log(result);
+
+      const items = reorder(orderedData, source.index, destination.index).map(
+        (item, index) => ({ ...item, order: index })
+      );
+
+      setOrderedData(items);
+      reorderList.mutate(items);
     }
   };
   return (
