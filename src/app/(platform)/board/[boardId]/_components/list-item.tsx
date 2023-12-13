@@ -5,6 +5,10 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { cn } from "@/lib/utils";
 import { ListWithCards } from "@/types";
 
+import { CardForm } from "./card-form";
+import { ListHeader } from "./list-header";
+import { CardItem } from "./card-item";
+
 interface ListItemProps {
   data: ListWithCards;
   index: number;
@@ -38,32 +42,33 @@ export const ListItem = ({ data, index }: ListItemProps) => {
             {...provided.dragHandleProps}
             className="w-full rounded-md bg-[#f1f2f4] shadow-md pb-2"
           >
+            <ListHeader onAddCard={enableEditing} data={data} />
             <Droppable droppableId={data.id.toString()} type="card">
               {(provided) => (
-                <ol
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={cn(
-                    "mx-1 px-1 py-0.5 flex flex-col gap-y-2",
-                    data.card.length > 0 ? "mt-2" : "mt-0"
-                  )}
-                >
-                  {data.card.map((item, index) => (
-                    //<CardItem index={index} key={card.id} data={card} />
-                    <p key={item.id}></p>
-                  ))}
-                  {provided.placeholder}
-                </ol>
+                <div>
+                  <ol
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className={cn(
+                      "mx-1 px-1 py-0.5 flex flex-col gap-y-2",
+                      data.card.length > 0 ? "mt-2" : "mt-0"
+                    )}
+                  >
+                    {data.card.map((item, index) => (
+                      <CardItem index={index} key={item.id} data={item} />
+                    ))}
+                    {provided.placeholder}
+                  </ol>
+                </div>
               )}
             </Droppable>
-            <p>{data.title}</p>
-            {/* <CardForm
+            <CardForm
               listId={data.id}
               ref={textareaRef}
               isEditing={isEditing}
               enableEditing={enableEditing}
               disableEditing={disableEditing}
-            /> */}
+            />
           </div>
         </li>
       )}
