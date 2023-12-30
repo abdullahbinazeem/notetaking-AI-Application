@@ -19,7 +19,7 @@ const BoardPage = async ({ params }: BoardIdPageProps) => {
   }
 
   const lists = await db.query.$list.findMany({
-    where: and(eq($list.boardId, parseInt(params.boardId))),
+    where: eq($list.boardId, parseInt(params.boardId)),
     with: {
       card: {
         orderBy: (card, { asc }) => [asc(card.order)],

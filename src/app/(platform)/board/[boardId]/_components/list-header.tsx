@@ -6,6 +6,10 @@ import { useEventListener } from "usehooks-ts";
 import { useState, useRef, ElementRef } from "react";
 import { ListType } from "@/lib/db/schema";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { Trash2Icon } from "lucide-react";
 
 interface ListHeaderProps {
   data: ListType;
@@ -13,8 +17,45 @@ interface ListHeaderProps {
 }
 
 export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
+  const params = useParams();
+
   const [title, setTitle] = useState(data.title);
   const [isEditing, setIsEditing] = useState(false);
+
+  const updateList = useMutation({
+    mutationFn: async (updatedTitle: string) => {
+      const response = await axios.post(
+        `/api/todos/${params.boardId}/${data.id}/updateList`,
+        {
+          updatedTitle,
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      setTitle(data);
+      toast.success("Succesfully update list to " + data);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const deleteList = useMutation({
+    mutationFn: async () => {
+      const response = await axios.delete(
+        `/api/todos/${params.boardId}/${data.id}`
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Successfully deleted list.");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const formRef = useRef<ElementRef<"form">>(null);
   const inputRef = useRef<ElementRef<"input">>(null);
@@ -32,13 +73,14 @@ export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
   };
 
   const handleSubmit = (formData: FormData) => {
-    const title = formData.get("title") as string;
-    const id = formData.get("id") as string;
-    const boardId = formData.get("boardId") as string;
+    const updatedTitle = formData.get("title") as string;
 
-    if (title === data.title) {
+    if (updatedTitle === data.title) {
       return disableEditing();
     }
+
+    updateList.mutate(updatedTitle);
+    return disableEditing();
   };
 
   const onBlur = () => {
@@ -47,7 +89,11 @@ export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
 
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Escape") {
+      inputRef.current?.blur();
       formRef.current?.requestSubmit();
+    }
+    if (e.key === "Enter") {
+      inputRef.current?.blur();
     }
   };
 
@@ -56,26 +102,38 @@ export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
   return (
     <div className="pt-2 px-2 text-sm font-semibold flex justify-between items-start- gap-x-2">
       {isEditing ? (
-        <form ref={formRef} action={handleSubmit} className="flex-1 px-[2px]">
-          <Input
-            ref={inputRef}
-            onBlur={onBlur}
-            id="title"
-            placeholder="Enter list title.."
-            defaultValue={title}
-            className="text-sm px-[7px] py-1 h-7 font-medium border-transparent hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
-          />
-          <button type="submit" hidden />
-        </form>
+        <div className="flex justify-between w-full">
+          <form ref={formRef} action={handleSubmit} className="flex-1 px-[2px]">
+            <Input
+              ref={inputRef}
+              onBlur={onBlur}
+              id="title"
+              name="title"
+              placeholder="Enter list title.."
+              defaultValue={title}
+              className="text-sm px-[7px] py-1 h-7 font-medium border-transparent hover:border-input focus:border-input transition truncate bg-transparent focus:bg-white"
+            />
+            <button type="submit" hidden />
+          </form>
+        </div>
       ) : (
-        <div
-          onClick={enableEditing}
-          className="w-full text-sm px-2.5 py-1 h-7 font-medium border-transparent"
-        >
-          {title}
+        <div className="flex justify-between w-full">
+          <div
+            onClick={enableEditing}
+            className=" cursor-pointer w-full text-sm px-2.5 py-1 h-7 font-medium border-transparent"
+          >
+            {title}
+          </div>
+          {/* <Trash2Icon
+            size={25}
+            color="#DB2112"
+            className="cursor-pointer hover:scale-150 transition-all"
+            onClick={() => {
+              deleteList.mutate();
+            }}
+          /> */}
         </div>
       )}
-      {/* <ListOptions onAddCard={onAddCard} data={data} /> */}
     </div>
   );
 };

@@ -80,6 +80,7 @@ export const ListForm = () => {
           className="w-full p-3 rounded-md bg-white space-y-4 shadow-md"
         >
           <Input
+            disabled={createList.isPending}
             ref={inputRef}
             id="title"
             name="title"
@@ -87,7 +88,9 @@ export const ListForm = () => {
             placeholder="Enter list title..."
           />
           <div className="flex items-center gap-x-1">
-            <Button type="submit">Add list</Button>
+            <Button type="submit" disabled={createList.isPending}>
+              Add list
+            </Button>
             <Button onClick={disableEditing} size="sm" variant="ghost">
               <X className="h-5 w-5" />
             </Button>

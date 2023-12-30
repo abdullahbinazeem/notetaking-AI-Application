@@ -45,7 +45,7 @@ export const listRelations = relations($list, ({ one, many }) => ({
 export const $card = pgTable("card", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  task: text("task").notNull(),
+  task: text("task"),
   order: integer("order").notNull(),
 
   listId: integer("listId"),

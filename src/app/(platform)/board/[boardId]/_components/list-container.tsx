@@ -14,25 +14,11 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-type ListWithCards = {
-  id: number;
-  createdAt: Date;
-  title: string;
-  order: number;
-  boardId: number | null;
-  card: {
-    id: number;
-    createdAt: Date;
-    title: string;
-    order: number;
-    task: string;
-    listId: number | null;
-  }[];
-}[];
+import { CardType } from "@/lib/db/schema";
+import { ListWithCards } from "@/types";
 
 interface ListContainerProps {
-  data: ListWithCards;
+  data: ListWithCards[];
   boardId: string;
 }
 
@@ -45,22 +31,51 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 }
 
 const ListContainer = ({ data }: ListContainerProps) => {
-  const router = useRouter();
   const params = useParams();
 
+  const [type, setType] = useState("card");
+
   const reorderList = useMutation({
-    mutationFn: async (list: ListWithCards) => {
+    mutationFn: async (list: ListWithCards[]) => {
       const response = await axios.post(
-        `/api/todos/${params.boardId}/reorder`,
+        `/api/todos/${params.boardId}/reorderList`,
         {
           list,
         }
       );
       return response.data;
     },
-    onSuccess: () => {
-      toast.success(`List reordered`);
-      router.refresh();
+    onSuccess: () => {},
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const reorderCard = useMutation({
+    mutationFn: async (card: CardType[]) => {
+      const response = await axios.post(
+        `/api/todos/${params.boardId}/reorderCard`,
+        {
+          card,
+        }
+      );
+      return response.data;
+    },
+    onSuccess: () => {},
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const deleteCard = useMutation({
+    mutationFn: async (deleteCard: { listId: string; cardId: string }) => {
+      const response = await axios.delete(
+        `/api/todos/${params.boardId}/${deleteCard.listId}/${deleteCard.cardId}`
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success("Successfully deleted card.");
     },
     onError: (error) => {
       toast.error(error.message);
@@ -76,8 +91,6 @@ const ListContainer = ({ data }: ListContainerProps) => {
   const onDragEnd = (result: any) => {
     const { destination, source, type } = result;
 
-    console.log(result);
-
     if (!destination) {
       return;
     }
@@ -90,9 +103,36 @@ const ListContainer = ({ data }: ListContainerProps) => {
       return;
     }
 
-    if (type == "list") {
-      console.log(result);
+    if (destination.droppableId === "trash") {
+      if (type == "card") {
+        let newOrderedData = [...orderedData];
 
+        const sourceList = newOrderedData.find(
+          (list) => list.id.toString() === source.droppableId
+        );
+
+        if (!sourceList) {
+          return;
+        }
+
+        if (!sourceList.card) {
+          sourceList.card = [];
+        }
+
+        const [removedCard] = sourceList?.card.splice(source.index, 1);
+        if (!removedCard.listId) {
+          return;
+        }
+        setOrderedData(newOrderedData);
+
+        deleteCard.mutate({
+          listId: removedCard.listId.toString(),
+          cardId: removedCard.id.toString(),
+        });
+      }
+    }
+
+    if (type == "list") {
       const items = reorder(orderedData, source.index, destination.index).map(
         (item, index) => ({ ...item, order: index })
       );
@@ -102,17 +142,82 @@ const ListContainer = ({ data }: ListContainerProps) => {
     }
 
     if (type == "card") {
-      console.log(result);
+      let newOrderedData = [...orderedData];
+
+      const sourceList = newOrderedData.find(
+        (list) => list.id.toString() === source.droppableId
+      );
+      const destList = newOrderedData.find(
+        (list) => list.id.toString() === destination.droppableId
+      );
+
+      if (!sourceList || !destList) {
+        return;
+      }
+
+      // Check if cards exists on the sourceList
+      if (!sourceList.card) {
+        sourceList.card = [];
+      }
+
+      // Check if cards exists on the destList
+      if (!destList.card) {
+        destList.card = [];
+      }
+
+      if (source.droppableId === destination.droppableId) {
+        const reorderedCards = reorder(
+          sourceList.card,
+          source.index,
+          destination.index
+        );
+
+        reorderedCards.forEach((item, idx) => {
+          item.order = idx;
+        });
+
+        sourceList.card = reorderedCards;
+        setOrderedData(newOrderedData);
+        reorderCard.mutate(reorderedCards);
+      } else {
+        // Remove card from the source list
+        const [movedCard] = sourceList.card.splice(source.index, 1);
+
+        // Assign the new listId to the moved card
+        movedCard.listId = destination.droppableId;
+
+        // Add card to the destination list
+        destList.card.splice(destination.index, 0, movedCard);
+
+        sourceList.card.forEach((item, idx) => {
+          item.order = idx;
+        });
+
+        // Update the order for each card in the destination list
+        destList.card.forEach((item, idx) => {
+          item.order = idx;
+        });
+
+        setOrderedData(newOrderedData);
+        reorderCard.mutate(destList.card);
+      }
     }
   };
+
+  const onBeforeCapture = (result: any) => {
+    setType(result.draggableId.split(":")[0]);
+  };
+
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={onDragEnd} onBeforeCapture={onBeforeCapture}>
       <Droppable droppableId="lists" type="list" direction="horizontal">
         {(provided) => (
           <div {...provided.droppableProps}>
-            <ol ref={provided.innerRef} className="flex gap-x-3 h-full">
+            <ol ref={provided.innerRef} className="mt-10 flex gap-x-3 h-full">
               {orderedData.map((list, index) => {
-                return <ListItem key={list.id} index={index} data={list} />;
+                return (
+                  <ListItem key={"list:" + list.id} index={index} data={list} />
+                );
               })}
               {provided.placeholder}
               <ListForm />
@@ -124,7 +229,7 @@ const ListContainer = ({ data }: ListContainerProps) => {
       <Droppable
         ignoreContainerClipping
         droppableId="trash"
-        type="card"
+        type={type}
         direction="vertical"
       >
         {(provided, snapshot) => (
@@ -132,7 +237,7 @@ const ListContainer = ({ data }: ListContainerProps) => {
             {...provided.droppableProps}
             ref={provided.innerRef}
             className={cn(
-              "scale-95 py-10 m-auto relative px-20  h-[150px] bg-red-50 mt-60 border-red-400 border-2 border-dashed rounded-xl transition",
+              "left-0 right-0 my-0 pt-0 m-auto w-[90vw] scale-95 fixed h-[150px] bg-red-50 mt-40 border-red-400 border-2 border-dashed rounded-xl transition",
               snapshot.isDraggingOver
                 ? "scale-100 overflow-hidden bg-red-200 border-red-800"
                 : ""

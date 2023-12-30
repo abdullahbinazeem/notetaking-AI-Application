@@ -1,15 +1,15 @@
 export interface ListWithCards {
+  boardId: number | null;
   id: number;
-  createdAt: Date;
   title: string;
   order: number;
-  boardId: number | null;
+  createdAt: Date;
   card: {
     id: number;
-    createdAt: Date;
     title: string;
+    task: string | null;
     order: number;
-    task: string;
     listId: number | null;
+    createdAt: Date;
   }[];
 }

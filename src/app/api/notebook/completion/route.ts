@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     messages: [
       {
         role: "system",
-        content: `You are a helpful AI embedded in a notion text editor app that is used to autocomplete sentences
+        content: `You are a helpful AI embedded in a text editor app that is used to autocomplete sentences
             The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
         AI is a well-behaved and well-mannered individual. Do not stream one character at a time, stream at least one word.
         `,
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       {
         role: "user",
         content: `
-        I am writing a piece of text in a notion text editor app.
+        I am writing a piece of text in a text editor app.
         Complete this sentence: ${prompt}
         keep the tone of the text consistent with the rest of the text.
         keep the response short.

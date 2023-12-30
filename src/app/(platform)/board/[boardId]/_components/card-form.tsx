@@ -26,12 +26,11 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
     const formRef = useRef<ElementRef<"form">>(null);
 
     const createCard = useMutation({
-      mutationFn: async (newCard: { task: string; title: string }) => {
+      mutationFn: async (newCard: { title: string }) => {
         console.log(newCard);
         const response = await axios.post(
           `/api/todos/${params.boardId}/${listId}/createCard`,
           {
-            task: newCard.task,
             title: newCard.title,
           }
         );
@@ -58,12 +57,11 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
 
     const onSubmit = (formData: FormData) => {
       const title = formData.get("title") as string;
-      const task = formData.get("task") as string;
-      if (!title || !task) {
+      if (!title) {
         toast.error("Please fill in all required fields");
       }
 
-      createCard.mutate({ task, title });
+      createCard.mutate({ title });
     };
 
     if (isEditing) {
@@ -73,18 +71,10 @@ export const CardForm = forwardRef<HTMLTextAreaElement, CardFormProps>(
           action={onSubmit}
           className="m-1 py-0.5 px-1 space-y-4 mt-6"
         >
-          <Input
-            id="title"
-            name="title"
-            placeholder="Enter a title for this card..."
-            required
-            disabled={createCard.isPending}
-          />
           <Textarea
             id="task"
-            name="task"
-            ref={ref}
-            placeholder="Enter a Task for this card..."
+            name="title"
+            placeholder="Enter a Title for this card..."
             required
             disabled={createCard.isPending}
           />

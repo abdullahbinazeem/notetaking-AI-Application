@@ -31,7 +31,7 @@ export const ListItem = ({ data, index }: ListItemProps) => {
   };
 
   return (
-    <Draggable draggableId={data.id.toString()} index={index}>
+    <Draggable draggableId={"list:" + data.id.toString()} index={index}>
       {(provided) => (
         <li
           {...provided.draggableProps}
@@ -55,7 +55,12 @@ export const ListItem = ({ data, index }: ListItemProps) => {
                     )}
                   >
                     {data.card.map((item, index) => (
-                      <CardItem index={index} key={item.id} data={item} />
+                      <CardItem
+                        index={index}
+                        key={item.id}
+                        data={item}
+                        list={data.title}
+                      />
                     ))}
                     {provided.placeholder}
                   </ol>

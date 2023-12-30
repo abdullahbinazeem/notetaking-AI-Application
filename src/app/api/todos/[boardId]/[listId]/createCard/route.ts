@@ -29,14 +29,10 @@ export async function POST(req: Request, { params }: CardParams) {
     }
 
     const body = await req.json();
-    const { title, task } = body;
+    const { title } = body;
 
     if (!title) {
       return new NextResponse("No title provided", { status: 401 });
-    }
-
-    if (!task) {
-      return new NextResponse("No task provided", { status: 401 });
     }
 
     const list = await db.query.$list.findFirst({
@@ -60,7 +56,6 @@ export async function POST(req: Request, { params }: CardParams) {
     const card_ids = await db
       .insert($card)
       .values({
-        task,
         title,
         listId: parseInt(params.listId),
         order: newOrder,
