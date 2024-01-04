@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { clerk } from "@/lib/clerk-server";
+import DeleteButton from "./_components/DeleteButton";
 
 export async function generateMetadata({
   params,
@@ -61,21 +62,25 @@ const BoardIdLayout = async ({
 
   return (
     <div className="min-h-screen grainy p-8">
-      <div className="max-w-4xl mx-auto border shadow-xl border-stone-200 rouned-lg p-4 flex items-center">
-        <Link href="/dashboard/todos">
-          <Button className="bg-green-600" size="sm">
-            Back
-          </Button>
-        </Link>
+      <div className="max-w-4xl mx-auto border shadow-xl border-stone-200 rouned-lg p-4  items-center flex justify-between">
+        <div className="flex">
+          <Link href="/dashboard/todos">
+            <Button className="bg-green-600" size="sm">
+              Back
+            </Button>
+          </Link>
 
-        <div className="w-3"></div>
-        <span className="font-semibold">
-          {user.firstName}
-          {user.lastName}
-        </span>
-        <span className="inline-block mx-1">/</span>
-        <span className="text-stone-500 font-semibold">{board.title}</span>
+          <div className="w-3"></div>
+          <span className="font-semibold">
+            {user.firstName}
+            {user.lastName}
+          </span>
+          <span className="inline-block mx-1">/</span>
+          <span className="text-stone-500 font-semibold">{board.title}</span>
+        </div>
+        <DeleteButton boardId={board.id} />
       </div>
+
       {children}
     </div>
   );

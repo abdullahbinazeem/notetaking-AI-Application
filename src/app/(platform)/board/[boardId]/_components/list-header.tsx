@@ -124,14 +124,6 @@ export const ListHeader = ({ data, onAddCard }: ListHeaderProps) => {
           >
             {title}
           </div>
-          {/* <Trash2Icon
-            size={25}
-            color="#DB2112"
-            className="cursor-pointer hover:scale-150 transition-all"
-            onClick={() => {
-              deleteList.mutate();
-            }}
-          /> */}
         </div>
       )}
     </div>

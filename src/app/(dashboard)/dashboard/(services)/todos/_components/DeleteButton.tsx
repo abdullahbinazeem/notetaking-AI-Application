@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -16,38 +16,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import toast from "react-hot-toast";
 
 type Props = {
-  noteId: number;
+  boardId: number;
   size?: string;
 };
 
-const DeleteButton = ({ noteId, size }: Props) => {
+const DeleteButton = ({ boardId }: Props) => {
   const router = useRouter();
   const deleteNote = useMutation({
     mutationFn: async () => {
-      const response = await axios.post("/api/notebook/deleteNote", {
-        noteId,
-      });
+      const response = await axios.delete(`/api/todos/${boardId}`, {});
       return response.data;
     },
   });
   return (
     <Dialog>
-      <DialogTrigger
-        className={cn(
-          "px-4 py-3 bg-red-800 text-white rounded-md",
-          (size = "sm" ? "p-2" : "")
-        )}
-      >
-        <Trash />
+      <DialogTrigger className={cn("p-2 bg-red-800 text-white rounded-md")}>
+        <Trash size={20} />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you sure you want to DELETE this note?</DialogTitle>
+          <DialogTitle>
+            Are you sure you want to DELETE this Todo board?
+          </DialogTitle>
           <DialogDescription className="pt-4">
-            This action cannot be undone. This will permanently delete your note
-            and remove all AI contexts.
+            This action cannot be undone. This will permanently delete your
+            board and remove all to-dos and lists inside.
           </DialogDescription>
           <div className="h-4" />
           <DialogClose asChild>
@@ -58,6 +54,7 @@ const DeleteButton = ({ noteId, size }: Props) => {
                 deleteNote.mutate(undefined, {
                   onSuccess: () => {
                     router.refresh();
+                    toast.success("Board deleted.");
                   },
                   onError: (err) => {
                     console.error(err);

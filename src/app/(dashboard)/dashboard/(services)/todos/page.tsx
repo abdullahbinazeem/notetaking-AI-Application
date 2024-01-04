@@ -6,6 +6,7 @@ import { $board } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 import Image from "next/image";
+import DeleteButton from "./_components/DeleteButton";
 
 const TodosPage = async () => {
   const { userId } = auth();
@@ -25,20 +26,28 @@ const TodosPage = async () => {
         <CreateBoardDialog />
         {boards.map((board) => {
           return (
-            <a href={`/board/${board.id}`} key={board.id}>
-              <div
-                style={{ backgroundImage: `url(${board.imageUrl})` }}
-                className=" hover:shadow-xl transition hover:-translate-y-1 group relative aspect-video bg-no-repeat bg-center bg-cover bg-sky-700 rounded-sm h-full w-full p-2 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition" />
-                <h3 className="relative text-lg font-semibold text-white">
-                  {board.title}
-                </h3>
-                <h3 className="relative text-xs text-white">
-                  {new Date(board.createdAt).toLocaleDateString()}
-                </h3>
+            <div
+              className="relative  hover:shadow-xl transition hover:-translate-y-1"
+              key={board.id}
+            >
+              <div className="z-10 absolute top-2 right-2 opacity-50 hover:opacity-100">
+                <DeleteButton boardId={board.id} />
               </div>
-            </a>
+              <a href={`/board/${board.id}`} key={board.id}>
+                <div
+                  style={{ backgroundImage: `url(${board.imageUrl})` }}
+                  className=" group  aspect-video bg-no-repeat bg-center bg-cover bg-sky-700 rounded-sm h-full w-full p-2 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition" />
+                  <h3 className="relative text-lg font-semibold text-white">
+                    {board.title}
+                  </h3>
+                  <h3 className="relative text-xs text-white">
+                    {new Date(board.createdAt).toLocaleDateString()}
+                  </h3>
+                </div>
+              </a>
+            </div>
           );
         })}
       </div>
