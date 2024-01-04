@@ -32,7 +32,6 @@ function reorder<T>(list: T[], startIndex: number, endIndex: number) {
 
 const ListContainer = ({ data }: ListContainerProps) => {
   const params = useParams();
-
   const [type, setType] = useState("card");
 
   const reorderList = useMutation({
@@ -62,6 +61,21 @@ const ListContainer = ({ data }: ListContainerProps) => {
       return response.data;
     },
     onSuccess: () => {},
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const deleteList = useMutation({
+    mutationFn: async (list: { listId: string }) => {
+      const response = await axios.delete(
+        `/api/todos/${params.boardId}/${list.listId}`
+      );
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success("Successfully deleted list.");
+    },
     onError: (error) => {
       toast.error(error.message);
     },
@@ -129,6 +143,19 @@ const ListContainer = ({ data }: ListContainerProps) => {
           listId: removedCard.listId.toString(),
           cardId: removedCard.id.toString(),
         });
+        return;
+      }
+      if (type == "list") {
+        let newOrderedData = Array.from(orderedData);
+        const [removedList] = newOrderedData?.splice(source.index, 1);
+
+        setOrderedData(newOrderedData);
+
+        deleteList.mutate({
+          listId: removedList.id.toString(),
+        });
+
+        return;
       }
     }
 
@@ -237,18 +264,36 @@ const ListContainer = ({ data }: ListContainerProps) => {
             {...provided.droppableProps}
             ref={provided.innerRef}
             className={cn(
-              "left-0 right-0 my-0 pt-0 m-auto w-[90vw] scale-95 fixed h-[150px] bg-red-50 mt-40 border-red-400 border-2 border-dashed rounded-xl transition",
+              "list-none left-0 right-0 my-0 pt-0 m-auto w-[90vw] scale-95 fixed h-[150px] bg-red-50 mt-40 border-red-400 border-2 border-dashed rounded-xl transition",
               snapshot.isDraggingOver
-                ? "scale-100 overflow-hidden bg-red-200 border-red-800"
+                ? "scale-105 overflow-hidden bg-red-200 border-red-800"
                 : ""
             )}
           >
             {provided.placeholder}
-            <Trash2
-              className="text-red-900 absolute left-0 right-0  top-0 bottom-0 m-auto"
-              size={32}
-              strokeWidth={1.3}
-            />
+            <div className="transition-all w-fit h-fit inline-block absolute top-0 bottom-0 left-0 right-0 m-auto">
+              {snapshot.isDraggingOver ? (
+                <>
+                  <Trash2
+                    className="text-red-900 m-auto mb-2"
+                    size={32}
+                    strokeWidth={1.3}
+                  />
+                  <p className="text-red-900 ">
+                    This will permanentely delete your {type}!
+                  </p>
+                </>
+              ) : (
+                <>
+                  <Trash2
+                    className="text-red-900 m-auto mb-2"
+                    size={32}
+                    strokeWidth={1.3}
+                  />
+                  <p className="text-red-500">Drag Lists or Cards to remove</p>
+                </>
+              )}
+            </div>
           </div>
         )}
       </Droppable>
