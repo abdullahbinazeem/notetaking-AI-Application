@@ -20,7 +20,7 @@ import {
 
 const TipTapMenuBar = ({ editor }: { editor: Editor }) => {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex  flex-wrap gap-2">
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         className={editor.isActive("heading", { level: 1 }) ? "is-active" : ""}
