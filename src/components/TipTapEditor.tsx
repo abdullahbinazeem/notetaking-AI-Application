@@ -119,7 +119,9 @@ const TipTapEditor = ({ note }: Props) => {
     if (debouncedEditorState === "") return;
     saveNote.mutate(undefined, {
       onSuccess: (data) => {
-        console.log("success update!", data);
+        toast.success("Changes saved", {
+          position: "top-left",
+        });
       },
       onError: (err) => {
         console.error(err);

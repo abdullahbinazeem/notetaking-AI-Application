@@ -5,7 +5,6 @@ import { auth } from "@clerk/nextjs";
 import { $board } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
-import Image from "next/image";
 import DeleteButton from "./_components/DeleteButton";
 
 const TodosPage = async () => {
@@ -35,7 +34,9 @@ const TodosPage = async () => {
               </div>
               <a href={`/board/${board.id}`} key={board.id}>
                 <div
-                  style={{ backgroundImage: `url(${board.imageUrl})` }}
+                  style={{
+                    backgroundImage: `url(${board.imageUrl})`,
+                  }}
                   className=" group  aspect-video bg-no-repeat bg-center bg-cover bg-sky-500 rounded-sm h-full w-full p-2 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition" />

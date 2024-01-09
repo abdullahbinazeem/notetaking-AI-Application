@@ -22,10 +22,25 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { SingleImageDropzone } from "@/components/Edgestore/signgleImageDropzone";
 
+import { cn } from "@/lib/utils";
+
 import { useEdgeStore } from "@/lib/edgestore";
+
+import Image from "next/image";
+
+import bg1 from "@/public/bg_1.jpg";
+import bg2 from "@/public/bg_2.jpg";
+import bg3 from "@/public/bg_3.jpg";
+import bg4 from "@/public/bg_4.jpg";
+import bg5 from "@/public/bg_5.jpg";
+import bg6 from "@/public/bg_6.jpg";
+
+const DefaultImages = [bg1, bg6, bg5, bg2, bg3, bg4];
 
 const CreateBoardDialog = () => {
   const [file, setFile] = useState<File>();
+  const [defaultFile, setDefaultFile] = useState<String>();
+
   const [input, setInput] = useState("");
 
   const [isOpen, setIsOpen] = useState(false);
@@ -47,16 +62,24 @@ const CreateBoardDialog = () => {
         });
         return response.data;
       }
+      if (defaultFile) {
+        const response = await axios.post("/api/todos/createBoard", {
+          title: input,
+          imageUrl: defaultFile,
+        });
+        return response.data;
+      }
       const response = await axios.post("/api/todos/createBoard", {
         title: input,
       });
+
       return response.data;
     },
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (input === "" || file == null) {
+    if (input === "" || (file == null && defaultFile == "")) {
       toast.error("You must fill in all input fields.");
       return;
     }
@@ -99,14 +122,42 @@ const CreateBoardDialog = () => {
           />
           <div className="h-4"></div>
           <h3 className="my-4 text-s text-gray-500">Board Image</h3>
+          <div className="grid grid-cols-3 gap-4">
+            {DefaultImages.map((image) => (
+              <div
+                onClick={() => {
+                  if (defaultFile == image.src) {
+                    setDefaultFile("");
+                  } else {
+                    setDefaultFile(image.src);
+                    setFile(undefined);
+                  }
+                }}
+              >
+                <Image
+                  width={200}
+                  height={200}
+                  alt="bg-image1"
+                  src={image}
+                  className={cn(
+                    "aspect-[4/3] object-cover w-full rounded-sm opacity-70 transition-opacity",
+                    defaultFile == image.src
+                      ? " outline outline-offset-1 outline-2 outline-blue-500  opacity-100"
+                      : ""
+                  )}
+                />
+              </div>
+            ))}
+          </div>
           <SingleImageDropzone
-            width={300}
-            height={200}
+            width={200}
+            height={150}
             value={file}
             onChange={(file) => {
               setFile(file);
+              setDefaultFile("");
             }}
-            className="m-auto"
+            className="m-auto mt-10"
           />
           <div className="h-4"></div>
           <div className="flex item-center gap-2">
