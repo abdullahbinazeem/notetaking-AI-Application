@@ -44,12 +44,14 @@ const NotebookPage = async ({ params: { noteId } }: Props) => {
             </Button>
           </Link>
           <div className="w-3"></div>
-          <span className="font-semibold">
+          <span className="font-semibold sm:block hidden">
             {user.firstName}
             {user.lastName}
           </span>
           <span className="inline-block mx-1">/</span>
-          <span className="text-stone-500 font-semibold">{note.name}</span>
+          <span className="text-stone-500 font-semibold sm:text-md text-sm">
+            {note.name}
+          </span>
           <div className="ml-auto">
             <DeleteButton size="sm" noteId={note.id} />
           </div>

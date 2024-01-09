@@ -21,11 +21,11 @@ const nav = [
     name: "To Dos",
     component: <div />,
   },
-  {
-    id: "grades",
-    name: "Grades",
-    component: <div />,
-  },
+  // {
+  //   id: "grades",
+  //   name: "Grades",
+  //   component: <div />,
+  // },
 ];
 
 const Navbar = () => {
