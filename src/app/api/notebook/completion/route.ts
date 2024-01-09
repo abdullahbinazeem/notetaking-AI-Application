@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   switch (AiStyle) {
     case "Academic":
       AiAddition =
-        "After the response, in this format write: Source - [cite an exact url of website where students can find this information].";
+        "After the response, in this format write: Source - [cite an exact url of website where students can find this exact information].";
       break;
     case "Formal":
       AiAddition = "The response should be formal and sound sophisticated.";

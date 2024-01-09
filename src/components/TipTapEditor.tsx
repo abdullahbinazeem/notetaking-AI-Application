@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import TipTapMenuBar from "./TipTapMenuBar";
@@ -23,15 +23,18 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { auth } from "@clerk/nextjs";
+import { clerk } from "@/lib/clerk-server";
 
 type Props = {
   note: NoteType;
+  name: String;
 };
 
 type style = "" | "Academic" | "Formal" | "Casual" | "Slang";
 type length = "" | "Short" | "Regular" | "Long";
 
-const TipTapEditor = ({ note }: Props) => {
+const TipTapEditor = ({ note, name }: Props) => {
   const [editorState, setEditorState] = React.useState(
     note.editorState || `<h1>${note.name}</h1>`
   );
@@ -52,7 +55,21 @@ const TipTapEditor = ({ note }: Props) => {
         "Error with AI autocorrect. Take a break, you might have reached AI limit."
       );
     },
+    onFinish: async (prompt, completion) => {
+      try {
+        console.log("started");
+        const response = await axios.post("/api/record", {
+          user: name,
+          message: `AI generated: ${completion}`,
+        });
+
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   });
+
   const saveNote = useMutation({
     mutationFn: async () => {
       const response = await axios.post("/api/notebook/saveNote", {
@@ -67,23 +84,21 @@ const TipTapEditor = ({ note }: Props) => {
     addKeyboardShortcuts() {
       return {
         "Shift-:": () => {
-          // take the last 30 words
-          startAi(this.editor.getText().split("").slice(-100).join(" "));
+          startAi(this.editor.getText().split("").slice(-100).join(""));
           return true;
         },
       };
     },
   });
 
-  const startAi = (prompt: string) => {
-    console.log(prompt);
+  const startAi = async (prompt: string) => {
     if (prompt) {
       lastCompletion.current = "";
-
       complete(prompt);
+    }
+    if (!isLoading) {
       return;
     }
-    return;
   };
 
   const editor = useEditor({
@@ -105,7 +120,6 @@ const TipTapEditor = ({ note }: Props) => {
     if (!completion) {
       return;
     }
-    console.log(lastCompletion.current);
     const diff = completion.slice(lastCompletion.current.length);
     lastCompletion.current = completion;
 
@@ -158,7 +172,7 @@ const TipTapEditor = ({ note }: Props) => {
         <div className="absolute bottom-4 sm:bottom-16 left-0 right-0 flex justify-center items-center gap-1">
           <Button
             onClick={() => {
-              startAi(editorText.split("").slice(-100).join(" "));
+              startAi(editorText.split("").slice(-100).join(""));
             }}
             disabled={isLoading}
             className="flex items-center gap-2 group rounded-full bg-green-600 transition hover:scale-105 hover:bg-green-700 "

@@ -18,6 +18,7 @@ type Props = {
 
 const NotebookPage = async ({ params: { noteId } }: Props) => {
   const { userId } = await auth();
+
   if (!userId) {
     return redirect("/dashboard");
   }
@@ -55,7 +56,10 @@ const NotebookPage = async ({ params: { noteId } }: Props) => {
         </div>
         <div className="h-4"></div>
         <div className="border-stone-200 shadow-xl border rounded-lg  px-6 sm:px-10 md:px-16 py-8 w-full">
-          <TipTapEditor note={note} />
+          <TipTapEditor
+            name={`${user.firstName} ${user.lastName}`}
+            note={note}
+          />
         </div>
       </div>
     </div>

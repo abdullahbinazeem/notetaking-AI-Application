@@ -11,6 +11,14 @@ export const $notes = pgTable("notes", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const $record = pgTable("record", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  AIrequest: text("request"),
+
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const $board = pgTable("board", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
