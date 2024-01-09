@@ -139,15 +139,21 @@ const TipTapEditor = ({ note }: Props) => {
           {AiStyle}
         </div>
       </div>
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-6">
         {editor && <TipTapMenuBar editor={editor} />}
-        <Button disabled variant={"outline"}>
+        <Button
+          disabled
+          variant={"outline"}
+          className={
+            saveNote.isPending ? "bg-green-500 text-black" : "text-black"
+          }
+        >
           {saveNote.isPending ? "Saving...." : "Saved"}
         </Button>
       </div>
       <div className="prose prose-sm w-full mt-4">
         <EditorContent editor={editor} />
-        <div className="absolute bottom-12 left-0 right-0 flex justify-center items-center gap-1">
+        <div className="absolute bottom-4 sm:bottom-16 left-0 right-0 flex justify-center items-center gap-1">
           <Button
             onClick={() => {
               startAi(editorText.split("").slice(-100).join(" "));
@@ -164,17 +170,20 @@ const TipTapEditor = ({ note }: Props) => {
             <DrawerContent className="min-h-[50vh]">
               <div className="mx-auto w-full max-w-4xl">
                 <DrawerHeader>
-                  <DrawerTitle className="text-2xl">AI Options</DrawerTitle>
+                  <DrawerTitle className="text-xl md:text-2xl">
+                    AI Options
+                  </DrawerTitle>
                   <DrawerDescription>
                     Customize your AI Automplete companion!
                   </DrawerDescription>
                 </DrawerHeader>
                 <div className="p-4 mb-4 flex gap-4 justify-between items-start">
                   <div className="basis-1/2">
-                    <h2 className="text-lg mb-2">Autocomplete Length:</h2>
-                    <div className="flex gap-4">
+                    <h2 className="md:text-lg mb-2">Autocomplete Length:</h2>
+                    <div className="flex flex-wrap gap-4">
                       <Button
                         variant="ghost"
+                        size="sm"
                         onClick={() => {
                           setAiLength("Short");
                         }}
@@ -188,6 +197,7 @@ const TipTapEditor = ({ note }: Props) => {
                       </Button>
                       <Button
                         variant="ghost"
+                        size="sm"
                         onClick={() => {
                           setAiLength("Regular");
                         }}
@@ -201,6 +211,7 @@ const TipTapEditor = ({ note }: Props) => {
                       </Button>
                       <Button
                         variant="ghost"
+                        size="sm"
                         onClick={() => {
                           setAiLength("Long");
                         }}
@@ -214,8 +225,8 @@ const TipTapEditor = ({ note }: Props) => {
                       </Button>
                     </div>
                   </div>
-                  <div className="basis-2/3 w-full bg-slate-200 p-2 rounded-lg self-stretch min-h-[130px]">
-                    <p className="text-slate-600 font-medium text-sm ">
+                  <div className="basis-2/3 w-full bg-slate-200 p-2 rounded-lg self-stretch min-h-[80px] sm:min-h-[130px]">
+                    <p className="text-slate-600 font-medium text-xs sm:text-sm ">
                       <span className="text-slate-800 font-regular">Nasa</span>
                       {AiLength == "Short" &&
                         " is an organization that explores space."}
@@ -228,10 +239,11 @@ const TipTapEditor = ({ note }: Props) => {
                 </div>
                 <div className="p-4 mb-4 flex gap-4 justify-between items-start">
                   <div className="basis-1/2">
-                    <h2 className="text-lg mb-2">AI Style:</h2>
+                    <h2 className="md:text-lg mb-2">AI Style:</h2>
                     <div className="flex gap-4 flex-wrap">
                       <Button
                         variant="ghost"
+                        size="sm"
                         onClick={() => {
                           setAiStyle("Casual");
                         }}
@@ -245,6 +257,7 @@ const TipTapEditor = ({ note }: Props) => {
                       </Button>
                       <Button
                         variant="ghost"
+                        size="sm"
                         onClick={() => {
                           setAiStyle("Academic");
                         }}
@@ -259,6 +272,7 @@ const TipTapEditor = ({ note }: Props) => {
 
                       <Button
                         variant="ghost"
+                        size="sm"
                         onClick={() => {
                           setAiStyle("Formal");
                         }}
@@ -272,6 +286,7 @@ const TipTapEditor = ({ note }: Props) => {
                       </Button>
                       <Button
                         variant="ghost"
+                        size="sm"
                         onClick={() => {
                           setAiStyle("Slang");
                         }}
@@ -281,12 +296,12 @@ const TipTapEditor = ({ note }: Props) => {
                             : "border-2 transition-all"
                         }
                       >
-                        Experimental (Slang)
+                        Slang
                       </Button>
                     </div>
                   </div>
-                  <div className="basis-2/3 w-full bg-slate-200 p-2 rounded-lg self-stretch min-h-[130px]">
-                    <p className="text-slate-600 font-medium text-sm ">
+                  <div className="basis-2/3 w-full bg-slate-200 p-2 rounded-lg self-stretch min-h-[80px] sm:min-h-[130px] ">
+                    <p className="text-slate-600 font-medium text-xs sm:text-sm ">
                       <span className="text-slate-800 font-regular">Nasa</span>
                       {AiStyle == "Casual" &&
                         " is an organization that explores space and conducts scientific research, like sending astronauts to the moon and studying other planets."}
@@ -295,7 +310,7 @@ const TipTapEditor = ({ note }: Props) => {
                       {AiStyle == "Formal" &&
                         ", the renowned space exploration agency, has continuously pushed the boundaries of human knowledge and expanded our understanding of the universe."}
                       {AiStyle == "Slang" &&
-                        ", man's out here exploring space like no one else. They've got that intergalactic swag, you know what I'm sayin'?"}
+                        " is making moves and exploring the unknown like a boss, pushin' boundaries and expanding our cosmic knowledge."}
                     </p>
                   </div>
                 </div>
@@ -310,7 +325,7 @@ const TipTapEditor = ({ note }: Props) => {
         </div>
       </div>
       <div className="h-24"></div>
-      <span className="text-sm">
+      <span className="text-sm sm:block hidden">
         Tip: Press
         <kbd className="mx-2 px-2 py-1.5 text-md font-semibold text-gray-800 bg-gray-100 border-gray-200 rounded-lg">
           &apos;Shift + :&apos;

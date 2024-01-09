@@ -26,7 +26,7 @@ export async function POST(req: Request) {
         "The response should in layman’s terms specific to a 10th grader’s comprehension";
       break;
     case "Slang":
-      AiAddition = "The response should sound like a roadman.";
+      AiAddition = "The response should be in slang.";
       break;
   }
 
