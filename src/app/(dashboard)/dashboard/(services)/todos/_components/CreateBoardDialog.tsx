@@ -125,6 +125,7 @@ const CreateBoardDialog = () => {
           <div className="grid grid-cols-3 gap-4">
             {DefaultImages.map((image) => (
               <div
+                key={image.src}
                 onClick={() => {
                   if (defaultFile == image.src) {
                     setDefaultFile("");
