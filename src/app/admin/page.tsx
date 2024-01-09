@@ -42,7 +42,7 @@ const Admin = async () => {
                 {record.AIrequest}
               </p>
               <p className="text-sm mt-3 text-neutral-600">
-                {record.createdAt.toLocaleTimeString()}
+                {record.createdAt.toTimeString()}
 
                 <span className="ml-2">
                   {record.createdAt.toLocaleDateString()}
