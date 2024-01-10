@@ -33,7 +33,7 @@ import bg5 from "@/public/bg_5.jpg";
 import bg6 from "@/public/bg_6.jpg";
 import { cn } from "@/lib/utils";
 
-const DefaultImages = [bg1, bg6, bg5, bg2, bg3, bg4];
+const DefaultImages = [bg1, bg6, bg5, bg2, bg4];
 
 const CreateNoteDialog = () => {
   const [file, setFile] = useState<File>();
@@ -103,7 +103,7 @@ const CreateNoteDialog = () => {
           </h2>
         </div>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>New Study notes</DialogTitle>
           <DialogDescription>
@@ -118,7 +118,7 @@ const CreateNoteDialog = () => {
           />
           <div className="h-4"></div>
           <h3 className="my-4 text-s text-gray-500">Note Image</h3>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-5 grid-cols-3 gap-4">
             {DefaultImages.map((image) => (
               <div
                 key={image.src}
@@ -147,14 +147,14 @@ const CreateNoteDialog = () => {
             ))}
           </div>
           <SingleImageDropzone
-            width={200}
-            height={150}
+            width={100}
+            height={100}
             value={file}
             onChange={(file) => {
               setFile(file);
               setDefaultFile("");
             }}
-            className="m-auto mt-10"
+            className="m-auto mt-10 min-w-[180px] min-h-[140px] "
           />
           <div className="h-4"></div>
           <div className="flex item-center gap-2">
